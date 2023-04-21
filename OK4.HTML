@@ -1,0 +1,225 @@
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAX FLOW Customer Inquiry</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #FFF;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <h1>MAX FLOW Customer Inquiry</h1>
+        <label for="companyName">Customer Company Name:</label>
+        <input type="text" id="companyName" name="companyName" required>
+
+<label for="contactPerson">Contact Person:</label>
+<input type="text" id="contactPerson" name="contactPerson" required>
+
+<label for="phone">Phone:</label>
+<input type="tel" id="phone" name="phone" required>
+
+<label for="email">Email:</label>
+<input type="email" id="email" name="email" required>
+
+
+        <label for="motorType">Select Motor Type:</label>
+        <select id="motorType" name="motorType">
+            <option value="">Please select</option>
+            <option value="AC_FAN">AC FAN</option>
+            <option value="DC_FAN">DC FAN</option>
+            <option value="DC_BLOWER">DC BLOWER</option>
+            <option value="EC_FAN">EC FAN</option>
+        </select>
+
+        <label for="voltage" class="hidden">Select Voltage:</label>
+        <select id="voltage" name="voltage" class="hidden"></select>
+
+        <label for="bearingSystem">Select Bearing System:</label>
+        <select id="bearingSystem" name="bearingSystem">
+            <option value="Ball_Bearing">Ball Bearing</option>
+            <option value="Sleeve_Bearing">Sleeve Bearing</option>
+        </select>
+
+        <div id="signalOutputContainer" class="hidden">
+            <label for="signalOutput">Signal Output:</label>
+            <select id="signalOutput" name="signalOutput">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+                            </select>
+
+          <div id="signalOutputOptions" class="hidden" style="display: flex; align-items: center;">
+  <label style="margin-right: 10px;">Select Signal Output Options:</label>
+  <div style="display: flex; flex-wrap: wrap;">
+    <label style="display: flex; align-items: center; margin-right: 10px;">
+      <input type="checkbox" id="fg" name="fg" value="FG" style="margin-right: 5px;"> FG
+    </label>
+    <label style="display: flex; align-items: center; margin-right: 10px;">
+      <input type="checkbox" id="rdh" name="rdh" value="RDH" style="margin-right: 5px;"> RDH
+    </label>
+    <label style="display: flex; align-items: center; margin-right: 10px;">
+      <input type="checkbox" id="rdl" name="rdl" value="RDL" style="margin-right: 5px;"> RDL
+    </label>
+    <label style="display: flex; align-items: center;">
+      <input type="checkbox" id="pwm" name="pwm" value="PWM" style="margin-right: 5px;"> PWM
+    </label>
+  </div>
+</div>
+
+
+
+        <label for="size">Select Size:</label>
+        <select id="size" name="size" class="hidden"></select>
+
+        <label for="quantity">Required Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required>
+    <label for="additionalRequirements">Additional Requirements:</label>
+    <textarea id="additionalRequirements" name="additionalRequirements" rows="4"></textarea>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    const motorType = document.getElementById('motorType');
+    const voltageLabel = document.querySelector('label[for="voltage"]');
+    const voltage = document.getElementById('voltage');
+    const signalOutputContainer = document.getElementById('signalOutputContainer');
+    const signalOutput = document.getElementById('signalOutput');
+    const signalOutputOptions = document.getElementById('signalOutputOptions');
+    const rdh = document.getElementById('rdh');
+    const rdl = document.getElementById('rdl');
+    const sizeLabel = document.querySelector('label[for="size"]');
+    const size = document.getElementById('size');
+
+    const voltageOptions = {
+        'AC_FAN': [
+            { text: '110/120 VAC', value: '110_120_VAC' },
+            { text: '220/240 VAC', value: '220_240_VAC' }
+        ],
+        'DC_FAN': [
+            { text: '5V DC', value: '5V_DC' },
+            { text: '12V DC', value: '12V_DC' },
+            { text: '24V DC', value: '24V_DC' },
+            { text: '48V DC', value: '48V_DC' }
+        ],
+        'DC_BLOWER': [
+            { text: '5V DC', value: '5V_DC' },
+            { text: '12V DC', value: '12V_DC' },
+            { text: '24V DC', value: '24V_DC' },
+            { text: '48V DC', value: '48V_DC' }
+        ],
+        'EC_FAN': [
+            { text: '110-230VAC', value: '110_230VAC' }
+        ]
+    };
+
+    const sizeOptions = {
+        'AC_FAN': [
+            '80x80x25mm', '80x80x38mm', '92x92x25mm', '120x120x25mm', '120x120x38mm', '172x150x51mm', '205x250x72mm', 'Ø254x89mm'
+        ],
+        'DC_FAN': [
+            '20x20x6mm', '20x20x10mm', '30x30x7mm', '30x30x10mm', '30x30x15mm', '40x40x7mm', '40x40x10mm', '40x40x15mm', '40x40x20mm', '40x40x28mm', '45x45x10mm', '50x50x10mm', '50x50x15mm', '50x50x20mm', '60x60x10mm', '60x60x20mm', '60x60x25mm', '60x60x38mm', '70x70x15mm', '70x70x20mm', '70x70x25mm', '80x80x10mm', '80x80x15mm', '80x80x20mm', '80x80x25mm', '80x80x32mm', '80x80x38mm', '92x92x25mm', '92x92x38mm', '120x120x25mm', '120x120x38mm', '140x140x25mm', '140x140x38mm', '140x140x50mm', '150x150x50mm', '172x150x25mm', '172x150x51mm', '200x200x60mm', 'Ø220x60mm', 'Ø254x89mm'
+],
+'DC_BLOWER': [
+'20x20x6mm', '30x30x4mm', '30x30x7mm', '30x30x10mm', '30x30x15mm', '35x35x7mm', '35x35x10mm', '40x40x10mm', '40x40x15mm', '40x40x20mm', '45x45x10mm', '50x50x10mm', '50x50x15mm', '50x50x20mm', '50x50x25mm', '60x60x15mm', '60x60x25mm', '60x60x28mm', '70x70x15mm', '75x75x25mm', '75x75x30mm', '97x97x20mm', '97x97x33mm', '120x120x32mm', '120x120x38mm', '140x140x40mm', '180x180x60mm'
+],
+'EC_FAN': [
+'60x60x25mm', '80x80x25mm', '80x80x38mm', '92x92x25mm', '92x92x38mm', '120x120x25mm', '120x120x38mm', '172x150x51mm', '200x200x60mm'
+]
+};    motorType.addEventListener('change', () => {
+        const selectedMotorType = motorType.value;
+        voltage.innerHTML = '';
+        voltage.classList.add('hidden');
+        voltageLabel.classList.add('hidden');
+        size.innerHTML = '';
+        size.classList.add('hidden');
+        sizeLabel.classList.add('hidden');
+
+        if (selectedMotorType) {
+            voltageLabel.classList.remove('hidden');
+            voltage.classList.remove('hidden');
+            voltage.innerHTML = '<option value="">Please select</option>';
+
+            voltageOptions[selectedMotorType].forEach(option => {
+                const opt = document.createElement('option');
+                opt.text = option.text;
+                opt.value = option.value;
+                voltage.add(opt);
+            });
+
+            sizeLabel.classList.remove('hidden');
+            size.classList.remove('hidden');
+            size.innerHTML = '<option value="">Please select</option>';
+
+            sizeOptions[selectedMotorType].forEach(option => {
+                const opt = document.createElement('option');
+                opt.text = option;
+                opt.value = option;
+                size.add(opt);
+            });
+
+            if (selectedMotorType === 'DC_FAN' || selectedMotorType === 'DC_BLOWER') {
+                signalOutputContainer.classList.remove('hidden');
+            } else {
+                signalOutputContainer.classList.add('hidden');
+            }
+        } else {
+            signalOutputContainer.classList.add('hidden');
+        }
+    });
+
+    signalOutput.addEventListener('change', () => {
+        if (signalOutput.value === 'Yes') {
+            signalOutputOptions.classList.remove('hidden');
+        } else {
+            signalOutputOptions.classList.add('hidden');
+        }
+    });
+
+    rdh.addEventListener('change', () => {
+        if (rdh.checked) {
+            rdl.checked = false;
+        }
+    });
+
+    rdl.addEventListener('change', () => {
+        if (rdl.checked) {
+            rdh.checked = false;
+        }
+    });
+</script>
+
+
